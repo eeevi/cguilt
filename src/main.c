@@ -11,6 +11,7 @@
 #include "main.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <dirent.h>
 // #include <sqlite3.h>
 #include <windows.h>
@@ -62,8 +63,8 @@ int main(void)
         It's because main_dir[i] still exist for some weird shit.
         Need to fix. Obviously need to fix...
     */
-    for (int i = 0; main_dir[i]; i++)
-        printf("%s\n", main_dir[i]);
+    printf("%s\n", check_file_in_dir("archive",
+            "C:\\Users\\hanka\\Desktop\\") ? "Yes" : "No");
 
     return 0;
 
@@ -76,7 +77,6 @@ int main(void)
 
     return 0;
 }
-
 
 
 /* Reads directory and puts it's files in the array of char*'s.
@@ -95,9 +95,29 @@ void dir_reader(const char* directory, char** files)
         }
         closedir(dir);
     }
-
     else
         files[0] = NULL;
 }
 
+
+/* Check if some file is in directory or not.
+*/
+uint8_t check_file_in_dir(char* filename, const char* dir)
+{
+    char* files[50];
+    dir_reader(dir, files);
+
+    if (files[0] == NULL)
+        return 0;
+
+    for (int i = 0; files[i]; i++)
+        if (!(strcmp(filename, files[i])))
+        {
+            free(files);
+            return 1;
+        }
+
+    free(files);
+    return 0;
+}
 

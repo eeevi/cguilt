@@ -29,3 +29,4 @@ c_container;
 #endif
 
 void dir_reader(const char* directory, char** files);
+uint8_t check_file_in_dir(char* filename, const char* dir);
