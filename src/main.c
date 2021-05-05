@@ -38,8 +38,8 @@ int main(void)
     if (!(GetUserName (username, &username_size)))
         return -1;
 
-    uint16_t user_path_size = strlen("C:\\Users\\\\");
-    char     user_path[username_size + strlen(username)];
+    uint16_t user_path_size = strlen("C:\\Users\\\\") + strlen(username);
+    char     user_path[user_path_size];
 
     /* Set local user path. */
     sprintf(user_path, "C:\\Users\\%s\\", username);
