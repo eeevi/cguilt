@@ -22,5 +22,5 @@ Also you need a serverside to accept the incoming POST requests. Enjoy.
 
 Compile everything. Btw you need somehow link libcurl as static. Purpose of that is written above.
 ```bash
-gcc -o <name> main.c send.c `pkg-config --cflags --libs sqlite3 libcurl`
+$ gcc -o <name> main.c send.c `pkg-config --cflags --libs sqlite3 libcurl`
 ```
