@@ -19,8 +19,8 @@ uint32_t;
 #ifndef cookies_datatype
 
 typedef struct {
-        char    host[100];
-        char    value[256];
+        char    host[128];
+        char    value[1024];
         uint8_t b_type;
 }
 cookies_datatype;

@@ -45,4 +45,4 @@ void collect_data(browser_prediction status);
 
 void get_sql(const char* sql_path, uint8_t bt);
 
-int send_single_cookie(cookies_datatype c_value);
+uint8_t send_single_cookie(cookies_datatype c_value);

