@@ -6,7 +6,8 @@
     @ TODO: cookies decryption.
 */
 
-#include "main.h"
+#include "include/main.h"
+#include "include/direct.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -95,51 +96,6 @@ int main(void)
             break;
     }
 
-    return 0;
-}
-
-
-/* Reads directory and puts it's files in the array of char*'s.
-*/
-void dir_reader(const char* directory, char** files)
-{
-    DIR           *dir;
-    struct dirent *entry;
-
-    if ((dir = opendir(directory)) != NULL)
-    {
-        int i = 0;
-        for (; (entry = readdir(dir)) != NULL; i++)
-        {
-            files[i] = (char *)malloc(sizeof(entry->d_name));
-            strcpy(files[i], entry->d_name);
-        }
-        closedir(dir);
-        files[i] = NULL;
-    }
-    else
-        files[0] = NULL;
-}
-
-
-/* Check if some file is in directory or not.
-*/
-uint8_t check_file_in_dir(char* filename, const char* dir)
-{
-    char* files[256];
-    dir_reader(dir, files);
-
-    if (files[0] == NULL)
-        return 0;
-
-    for (int i = 0; files[i]; i++)
-        if (!(strcmp(filename, files[i])))
-        {
-            free(files);
-            return 1;
-        }
-
-    free(files);
     return 0;
 }
 

