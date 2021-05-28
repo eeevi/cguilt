@@ -1,7 +1,7 @@
 /*
     @ Cguilt: main file.
     @ Written and distributed just in education purpose.
-    @ Send bugreports: github.com/vulpes-solis/cguilt
+    @ Send bugreports: github.com/eeevi/cguilt
 
     @ TODO: cookies decryption.
 */
