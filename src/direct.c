@@ -12,7 +12,8 @@
 #include <stdlib.h>
 
 
-void dir_reader(const char* directory, char** files)
+void
+dir_reader(const char* directory, char** files)
 {
     DIR           *dir;
     struct dirent *entry;
@@ -33,21 +34,25 @@ void dir_reader(const char* directory, char** files)
 }
 
 
-uint8_t check_file_in_dir(char* filename, const char* dir)
+bool
+check_file_in_dir(char* filename, const char* dir)
 {
     char* files[256];
     dir_reader(dir, files);
 
     if (files[0] == NULL)
-        return 0;
+    {
+        free(files);
+        return false;
+    }
 
     for (int i = 0; files[i]; i++)
         if (!(strcmp(filename, files[i])))
         {
             free(files);
-            return 1;
+            return true;
         }
 
     free(files);
-    return 0;
+    return false;
 }

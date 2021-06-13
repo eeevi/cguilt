@@ -12,9 +12,9 @@
 #define CURL_LOG_OFF
 
 
-/* Will send one cookie pair (host:value).
-*/
-uint8_t send_single_cookie(cookies_datatype* c_value)
+/* Will send one cookie pair (host:value). */
+uint8_t
+send_single_cookie(cookies_datatype* c_value)
 {
 
     #ifndef CURL_LOG_OFF
